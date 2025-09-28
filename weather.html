@@ -3,43 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Weather App</title>
+  <title>Weather App</title>
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
     #weather { margin: 20px 0; }
-    button { margin: 8px; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; }
+    input, button { padding: 10px; font-size: 16px; margin: 5px; }
+    button { cursor: pointer; border-radius: 6px; }
   </style>
 </head>
 <body>
   <h1>🌤️ Weather Info</h1>
-  <div id="weather">Loading...</div>
+  <input type="text" id="cityInput" placeholder="Enter city name" />
+  <button onclick="getWeather()">Get Weather</button>
+  <div id="weather">Enter a city and click "Get Weather"</div>
   <button onclick="openInBrowser()">Open in Browser</button>
   <button onclick="downloadPDF()">Download as PDF</button>
 
-  <!-- jsPDF for PDF generation -->
+  <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script>
-    async function getWeather() {
-      try {
-        const lat = 52.52; // Berlin latitude
-        const lon = 13.41; // Berlin longitude
-        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
 
-        // Use CORS proxy
+  <script>
+    // Predefined city coordinates (for demo)
+    const cityCoordinates = {
+      berlin: { lat: 52.52, lon: 13.41 },
+      london: { lat: 51.5074, lon: -0.1278 },
+      paris: { lat: 48.8566, lon: 2.3522 },
+      newyork: { lat: 40.7128, lon: -74.0060 },
+      tokyo: { lat: 35.6895, lon: 139.6917 }
+    };
+
+    async function getWeather() {
+      const cityName = document.getElementById("cityInput").value.toLowerCase();
+      if (!cityName || !cityCoordinates[cityName]) {
+        document.getElementById("weather").innerText = "⚠️ City not found. Try: Berlin, London, Paris, NewYork, Tokyo";
+        return;
+      }
+
+      const { lat, lon } = cityCoordinates[cityName];
+      const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+
+      try {
+        // Use CORS proxy for GitHub Pages
         const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`);
         const data = await res.json();
 
-        const city = "Berlin";
         const temp = data.current_weather.temperature;
         const wind = data.current_weather.windspeed;
 
         document.getElementById("weather").innerHTML = `
-          <p><strong>City:</strong> ${city}</p>
+          <p><strong>City:</strong> ${cityName.charAt(0).toUpperCase() + cityName.slice(1)}</p>
           <p><strong>Temperature:</strong> ${temp} °C</p>
           <p><strong>Wind:</strong> ${wind} km/h</p>
         `;
       } catch (e) {
-        document.getElementById("weather").innerHTML = "⚠️ Could not load weather";
+        document.getElementById("weather").innerText = "⚠️ Could not load weather";
         console.error(e);
       }
     }
@@ -57,8 +74,6 @@
       doc.text(weatherText, 10, 20);
       doc.save("weather-info.pdf");
     }
-
-    getWeather();
   </script>
 </body>
 </html>
