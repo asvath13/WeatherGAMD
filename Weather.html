@@ -21,12 +21,12 @@
   <script>
     async function getWeather() {
       try {
-        // Example: Berlin coordinates
-        const lat = 52.52;
-        const lon = 13.41;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+        const lat = 52.52; // Berlin latitude
+        const lon = 13.41; // Berlin longitude
+        const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
 
-        const res = await fetch(url);
+        // Use CORS proxy
+        const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`);
         const data = await res.json();
 
         const city = "Berlin";
@@ -40,6 +40,7 @@
         `;
       } catch (e) {
         document.getElementById("weather").innerHTML = "⚠️ Could not load weather";
+        console.error(e);
       }
     }
 
