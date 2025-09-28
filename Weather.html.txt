@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Weather App</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    #weather { margin: 20px 0; }
+    button { margin: 8px; padding: 12px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>🌤️ Weather Info</h1>
+  <div id="weather">Loading...</div>
+  <button onclick="openInBrowser()">Open in Browser</button>
+  <button onclick="downloadPDF()">Download as PDF</button>
+
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    async function getWeather() {
+      try {
+        // Example: Berlin coordinates
+        const lat = 52.52;
+        const lon = 13.41;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const city = "Berlin";
+        const temp = data.current_weather.temperature;
+        const wind = data.current_weather.windspeed;
+
+        document.getElementById("weather").innerHTML = `
+          <p><strong>City:</strong> ${city}</p>
+          <p><strong>Temperature:</strong> ${temp} °C</p>
+          <p><strong>Wind:</strong> ${wind} km/h</p>
+        `;
+      } catch (e) {
+        document.getElementById("weather").innerHTML = "⚠️ Could not load weather";
+      }
+    }
+
+    function openInBrowser() {
+      const newWindow = window.open("", "_blank");
+      newWindow.document.write("<h1>Weather Info</h1>" + document.getElementById("weather").innerHTML);
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const weatherText = document.getElementById("weather").innerText;
+      doc.text("Weather Information", 10, 10);
+      doc.text(weatherText, 10, 20);
+      doc.save("weather-info.pdf");
+    }
+
+    getWeather();
+  </script>
+</body>
+</html>
