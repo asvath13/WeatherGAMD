@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>DWD Weather Fetch</title>
+  <meta charset="UTF-8">
+  <title>Gebietsvorhersagen für Segelflug</title>
   <style>
-    body { from DWD (METAR)</h1>
-  <button onclick="fetchWeather()">Fetch Weather</button>
-  <div id="weather">Weather data will appear here...</div>
-
-  <script>
-    async function fetchWeather() {
-      const station = "EDDM"; // Munich Airport METAR station
-      const url = `https://www.dwd.de/DE/fachnutzer/luftfahrt/teaser/gebietsvorhersagen_segelflug/node_56`;
-
-      try {
-               document.getElementById("weather").innerText = text;
-      } catch (error) {
-        document.getElementById("weather").innerText = "Error: " + error.message;
-      }
+    body {
+      margin: 0;
+      padding: 0;
     }
-  </script>
+    iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe src="https://www.dwd.de/DE/fachnutzer/luftfahrt/teaser/gebietsvorhersagen_segelflug/node_uebersicht.html" title="DWD Segelflug Vorhersagen"></iframe>
 </body>
 </html>
